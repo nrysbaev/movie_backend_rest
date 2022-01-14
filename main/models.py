@@ -25,7 +25,7 @@ class Movie(models.Model):
             c += i.value
         try:
             return c / self.ratings.all().count()
-        except:
+        except ZeroDivisionError:
             return 0
 
     def __str__(self):
