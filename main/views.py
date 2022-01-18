@@ -1,7 +1,7 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import MovieSerializer, MovieDetailSerializer
+from .serializers import MovieSerializer, MovieDetailSerializer, MovieCreateSerializer
 from .models import Movie
 
 
@@ -24,11 +24,17 @@ def movie_list_view(request):
         data = MovieSerializer(movies, many=True).data
         return Response(data=data)
     elif request.method == 'POST':
-        name = request.data['name']
-        description = request.data.get('description', '')
-        duration = request.data['duration']
-        is_active = request.data['is_active']
-        genres = request.data['genres']
+        print('request.data:', request.data)
+        serializer = MovieCreateSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(status=status.HTTP_406_NOT_ACCEPTABLE,
+                            data={'errors': serializer.errors})
+        print('serializer.initial_data:', serializer.initial_data)
+        name = serializer.initial_data['name']
+        description = serializer.initial_data.get('description', '')
+        duration = serializer.initial_data['duration']
+        is_active = serializer.initial_data['is_active']
+        genres = serializer.initial_data['genres']
         movie = Movie.objects.create(
             name=name, description=description, duration=duration,
             is_active=is_active

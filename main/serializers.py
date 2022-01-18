@@ -42,3 +42,33 @@ class MovieDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Movie
         fields = ['id', 'name', 'description', 'duration', 'count_genres']
+
+
+from rest_framework.exceptions import ValidationError
+
+
+class GenreCreateSerializer(serializers.Serializer):
+    name = serializers.CharField()
+    is_active = serializers.BooleanField()
+
+
+class MovieCreateSerializer(serializers.Serializer):
+    name = serializers.CharField(min_length=3, max_length=10)
+    description = serializers.CharField(required=False)
+    duration = serializers.IntegerField(default=0)
+    is_active = serializers.BooleanField()
+    genres = serializers.ListField(child=serializers.IntegerField())
+    created_genres = serializers.ListField(child=GenreCreateSerializer())
+
+    # def validate_name(self, name):
+    #     movies = Movie.objects.filter(name=name)
+    #     if movies:
+    #         raise ValidationError('Movie already exists!')
+    #     return name
+
+    def validate(self, attrs):
+        name = attrs['name']
+        movies = Movie.objects.filter(name=name)
+        if movies:
+            raise ValidationError('Movie already exists!')
+        return name
