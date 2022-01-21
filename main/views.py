@@ -19,6 +19,7 @@ def index(request):
 
 @api_view(['GET', 'POST'])
 def movie_list_view(request):
+    print(request.user)
     if request.method == 'GET':
         movies = Movie.objects.all()
         data = MovieSerializer(movies, many=True).data

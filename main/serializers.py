@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Movie, Genre, Rating
+from rest_framework.exceptions import ValidationError
 
 
 class GenresSerializer(serializers.ModelSerializer):
@@ -44,9 +45,6 @@ class MovieDetailSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'description', 'duration', 'count_genres']
 
 
-from rest_framework.exceptions import ValidationError
-
-
 class GenreCreateSerializer(serializers.Serializer):
     name = serializers.CharField()
     is_active = serializers.BooleanField()
@@ -72,3 +70,9 @@ class MovieCreateSerializer(serializers.Serializer):
         if movies:
             raise ValidationError('Movie already exists!')
         return name
+
+    # def validate_name(self, name):
+    #     for i in name:
+    #         if 1040 <= ord(i) <= 1103:
+    #             raise ValidationError('Please use english only')
+    #     return name
