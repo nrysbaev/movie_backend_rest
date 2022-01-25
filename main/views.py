@@ -25,17 +25,19 @@ def movie_list_view(request):
         data = MovieSerializer(movies, many=True).data
         return Response(data=data)
     elif request.method == 'POST':
-        print('request.data:', request.data)
         serializer = MovieCreateSerializer(data=request.data)
+        print('request.data:', request.data)
+        print('serializer.initial_data:', serializer.initial_data)
         if not serializer.is_valid():
             return Response(status=status.HTTP_406_NOT_ACCEPTABLE,
                             data={'errors': serializer.errors})
-        print('serializer.initial_data:', serializer.initial_data)
-        name = serializer.initial_data['name']
-        description = serializer.initial_data.get('description', '')
-        duration = serializer.initial_data['duration']
-        is_active = serializer.initial_data['is_active']
-        genres = serializer.initial_data['genres']
+        print('serializer.validated_data:', serializer.validated_data)
+        print('errors:', serializer.errors)
+        name = serializer.validated_data['name']
+        description = serializer.validated_data.get('description', '')
+        duration = serializer.validated_data['duration']
+        is_active = serializer.validated_data['is_active']
+        genres = serializer.validated_data['genres']
         movie = Movie.objects.create(
             name=name, description=description, duration=duration,
             is_active=is_active

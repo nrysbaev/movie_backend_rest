@@ -58,18 +58,19 @@ class MovieCreateSerializer(serializers.Serializer):
     genres = serializers.ListField(child=serializers.IntegerField())
     created_genres = serializers.ListField(child=GenreCreateSerializer())
 
-    # def validate_name(self, name):
+    def validate_name(self, value):
+        movies = Movie.objects.filter(name=value)
+        if movies:
+            raise ValidationError('Movie already exists!')
+        return value
+
+    # При кастомной валидации всех полей (attrs) в конце надо возвращать также все поля (attrs)
+    # def validate(self, attrs):
+    #     name = attrs['name']
     #     movies = Movie.objects.filter(name=name)
     #     if movies:
     #         raise ValidationError('Movie already exists!')
-    #     return name
-
-    def validate(self, attrs):
-        name = attrs['name']
-        movies = Movie.objects.filter(name=name)
-        if movies:
-            raise ValidationError('Movie already exists!')
-        return name
+    #     return attrs
 
     # def validate_name(self, name):
     #     for i in name:
